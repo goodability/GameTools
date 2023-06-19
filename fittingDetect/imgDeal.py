@@ -58,7 +58,7 @@ class imageCoper:
         pass
     def classfyAllFitting(self,**kwargs):
         self.getFittings(**kwargs)
-        muzzleType,muzzleScore=self.classfyOneFitingByType(self.muzzleImg,"compensator")
+        muzzleType,muzzleScore=self.classfyOneFitingByType(self.muzzleImg,"muzzle")
         gripType,gripScore=self.classfyOneFitingByType(self.gripImg,"grip")
         stockType,stockScore=self.classfyOneFitingByType(self.stockImg,"stock")
         logging.info("枪口类型为:"+muzzleType+"识别准确率为:"+str(muzzleScore)+"%")

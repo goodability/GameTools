@@ -12,3 +12,6 @@ stridesNum=6
 screenCatchXmin=0.6835
 screenCatchYmin=0.0694
 screenCatchYmax=0.5208
+
+screenWidth=2560
+screenHeight=1440
