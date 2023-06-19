@@ -22,7 +22,7 @@ def getStockPart(img):
     return stockImg
 if __name__ == '__main__':
     originImgPath="./data"
-    savePath="E:/temp/imgtest"
+    savePath="./data/fittingModule"
     imgNameList=os.listdir(originImgPath)
     print(imgNameList)
     for i in tqdm(imgNameList):
