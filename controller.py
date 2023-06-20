@@ -12,6 +12,7 @@ from threadPool import ThreadPool
 import pydirectinput
 from fittingDetect.imgDeal import imageCoper
 STATUS=-1
+fittingWeights=1
 isSquat=False
 isGrovel=False
 holdKeyFlag=False
@@ -21,7 +22,7 @@ gun=None
 logging=Logging().getLogging()
 
 def on_press(key):
-    global STATUS,gun,isSquat,isGrovel,isHoldBreath
+    global STATUS,gun,isSquat,isGrovel,isHoldBreath,fittingWeights
     try:
         if key==Key.caps_lock:
             STATUS=STATUS*-1
@@ -29,7 +30,7 @@ def on_press(key):
                 logging.info("开关打开！")
             else:
                 logging.info("开关关闭！")
-        #开关打开才能选择枪械11
+        #开关打开才能选择枪械
         if STATUS==1:
             # print(key),type(key)
             if key==Key.end or str(key)=='<97>':
@@ -41,7 +42,7 @@ def on_press(key):
             #识别配件
             elif key==Key.tab:
                 imgcoper=imageCoper()
-                imgcoper.classfyAllFitting()
+                fittingWeights=imgcoper.classfyAllFitting()
             #蹲下
             elif str(key)=="'c'" or str(key)=="'C'":
                 if isSquat==False:
@@ -80,7 +81,7 @@ def on_click(x,y,button,pressed):
             if pressed:
                 ThreadPool.pool.submit(moveMouse)
 def getGunData():
-    global gun,isSquat,isGrovel,isHoldBreath
+    global gun,isSquat,isGrovel,isHoldBreath,fittingWeights
     if gun=="m762":
         gun_step=gunConfig.m762_step
         shootRate=gunConfig.m762_fire_rate
@@ -91,8 +92,8 @@ def getGunData():
         logging.error("非法按键，没有对应的装备")
         raise RuntimeError("运行过程错误")
     stepWeight=posture.getPostureWeight(isGrovel,isHoldBreath,isSquat)
-    logging.info("开枪姿态权重"+str(stepWeight))
-    gun_step=gun_step*stepWeight
+    logging.info("开枪姿态后座控制权重"+str(stepWeight)+"---配件后座控制权重"+str(fittingWeights))
+    gun_step=gun_step*stepWeight*fittingWeights
     return gun_step,shootRate
 def moveMouse():
     global is_left_button_pressed,gun

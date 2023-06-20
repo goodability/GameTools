@@ -6,6 +6,7 @@ import pyautogui
 from skimage.metrics import structural_similarity
 import numpy as np
 from config import fittingConfig
+from fittingDetect.fittingWeights import getFittingWeights
 class imageCoper:
     def __init__(self):
         self.screenWidth,self.screenHeight=pyautogui.size()
@@ -51,20 +52,20 @@ class imageCoper:
             score=self.compareSimliar(imgGray,moduleImgGray)
             fittingScoredic[moduleFitting.split(".")[0]]=score
         fittingScoredic=sorted(fittingScoredic.items(),key=lambda x:x[1],reverse=True)
-        if fittingScoredic[0][1]<40:
+        if fittingScoredic[0][1]<fittingConfig.fittingDetectTheadShold:
             return "None","None"
         else:
             return fittingScoredic[0][0],fittingScoredic[0][1]
-        pass
     def classfyAllFitting(self,**kwargs):
         self.getFittings(**kwargs)
         muzzleType,muzzleScore=self.classfyOneFitingByType(self.muzzleImg,"muzzle")
         gripType,gripScore=self.classfyOneFitingByType(self.gripImg,"grip")
         stockType,stockScore=self.classfyOneFitingByType(self.stockImg,"stock")
+        fittingWeights=getFittingWeights.getWeights(muzzleType,gripType,stockType)
         logging.info("枪口类型为:"+muzzleType+"识别准确率为:"+str(muzzleScore)+"%")
         logging.info("握把类型为:"+gripType+"识别准确率为:"+str(gripScore)+"%")
         logging.info("枪托类型为:"+stockType+"识别准确率为:"+str(stockScore)+"%")
-
+        return fittingWeights
             # imgGray=cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
             # moduleImgGray=cv2.cvtColor(moduleImg,cv2.COLOR_RGB2GRAY)
             # moduleImgGray=cv2.resize(moduleImgGray,(imgGray.shape[1],imgGray.shape[0]))
