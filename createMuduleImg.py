@@ -20,11 +20,18 @@ def getStockPart(img):
                int(globalConfig.screenWidth * fittingConfig.stock1Xmin):
                int(globalConfig.screenWidth * fittingConfig.stock1Xmax)]
     return stockImg
+def getJudgeTabPart(img):
+    isTabImg=img[int(globalConfig.screenHeight * globalConfig.judgeBagBoxYmin):
+                         int(globalConfig.screenHeight * globalConfig.judgeBagBoxYmax),
+               int(globalConfig.screenWidth * globalConfig.judgeBagBoxXmin):
+               int(globalConfig.screenWidth * globalConfig.judgeBagBoxXmax)]
+    return isTabImg
 if __name__ == '__main__':
     originImgPath="./data"
     savePath="./data/fittingModule"
     imgNameList=os.listdir(originImgPath)
     print(imgNameList)
+    flag=0
     for i in tqdm(imgNameList):
         try:
             if i.split(".")[1]=="png":
@@ -35,6 +42,10 @@ if __name__ == '__main__':
                 cv2.imwrite(savePath+"/muzzle/"+i,muzzleImg)
                 cv2.imwrite(savePath+"/grip/"+i,gripImg)
                 cv2.imwrite(savePath+"/stock/"+i,stockImg)
+                if flag==0:
+                    judgeTabImg=getJudgeTabPart(img)
+                    cv2.imwrite(originImgPath+"/constant/judgeBag.png",judgeTabImg)
+                flag+=1
         except:
             print("非图片，跳过")
 

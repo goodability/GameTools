@@ -5,7 +5,7 @@ import cv2
 import pyautogui
 from skimage.metrics import structural_similarity
 import numpy as np
-from config import fittingConfig
+from config import fittingConfig,globalConfig
 from fittingDetect.fittingWeights import getFittingWeights
 class imageCoper:
     def __init__(self):
@@ -31,6 +31,10 @@ class imageCoper:
                             int(self.screenHeight*fittingConfig.stock1Ymax),
                             int(self.screenWidth*fittingConfig.stock1Xmin):
                             int(self.screenWidth*fittingConfig.stock1Xmax)]
+        self.isOpenBagImg=screenImg[int(self.screenHeight * globalConfig.judgeBagBoxYmin):
+                            int(self.screenHeight * globalConfig.judgeBagBoxYmax),
+                            int(self.screenWidth * globalConfig.judgeBagBoxXmin):
+                            int(self.screenWidth * globalConfig.judgeBagBoxXmax)]
         # cv2.imshow("compen",self.muzzleImg)
         # cv2.imshow("grip",self.gripImg)
         # cv2.imshow("stock",self.stockImg)
@@ -56,15 +60,33 @@ class imageCoper:
             return "None","None"
         else:
             return fittingScoredic[0][0],fittingScoredic[0][1]
+    def classIsInBag(self,img):
+        moduleImgPath = "./data/constant/"
+        moduleImgname=os.listdir(moduleImgPath)[0]
+        moduleImg=cv2.imread(moduleImgPath+moduleImgname)
+        moduleImgGray=cv2.cvtColor(moduleImg,cv2.COLOR_RGB2GRAY)
+        imgGray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        score=self.compareSimliar(imgGray,moduleImgGray)
+        if score<globalConfig.ifInBagtheadshold:
+            return False
+        else:
+            return True
+
     def classfyAllFitting(self,**kwargs):
         self.getFittings(**kwargs)
-        muzzleType,muzzleScore=self.classfyOneFitingByType(self.muzzleImg,"muzzle")
-        gripType,gripScore=self.classfyOneFitingByType(self.gripImg,"grip")
-        stockType,stockScore=self.classfyOneFitingByType(self.stockImg,"stock")
-        fittingWeights=getFittingWeights.getWeights(muzzleType,gripType,stockType)
-        logging.info("枪口类型为:"+muzzleType+"识别准确率为:"+str(muzzleScore)+"%")
-        logging.info("握把类型为:"+gripType+"识别准确率为:"+str(gripScore)+"%")
-        logging.info("枪托类型为:"+stockType+"识别准确率为:"+str(stockScore)+"%")
+        ifInbag = self.classIsInBag(self.isOpenBagImg)
+        fittingWeights=1
+        if ifInbag:
+            logging.info("打开背包")
+            muzzleType,muzzleScore=self.classfyOneFitingByType(self.muzzleImg,"muzzle")
+            gripType,gripScore=self.classfyOneFitingByType(self.gripImg,"grip")
+            stockType,stockScore=self.classfyOneFitingByType(self.stockImg,"stock")
+            fittingWeights=getFittingWeights.getWeights(muzzleType,gripType,stockType)
+            logging.info("枪口类型为:"+muzzleType+"识别准确率为:"+str(muzzleScore)+"%")
+            logging.info("握把类型为:"+gripType+"识别准确率为:"+str(gripScore)+"%")
+            logging.info("枪托类型为:"+stockType+"识别准确率为:"+str(stockScore)+"%")
+        else:
+            logging.info("关闭背包")
         return fittingWeights
             # imgGray=cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
             # moduleImgGray=cv2.cvtColor(moduleImg,cv2.COLOR_RGB2GRAY)

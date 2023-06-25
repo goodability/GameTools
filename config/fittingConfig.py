@@ -21,7 +21,7 @@ stock1Ymax=0.2555
 '''
 muzzleComensatorName="muzzleCompensator"
 muzzleComensator=0.85
-noFireName="noFireName"
+noFireName="noFirer"
 noFirer=0.90
 silencerName="silencer"
 silencer=1
@@ -32,7 +32,7 @@ verticalGripName="verticalGrip"
 verticalGrip=0.85
 lightGripName="lightGrip"
 lightGrip=1#首弹百分之40控制
-thumbGripName="thumGrip"
+thumbGripName="thumbGrip"
 thumbGrip=0.92
 redGripName="redGrip"
 redGrip=0.90
