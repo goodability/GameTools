@@ -20,4 +20,3 @@ judgeBagBoxXmin=0.1953
 judgeBagBoxYmin=0.0548
 judgeBagBoxXmax=0.2238
 judgeBagBoxYmax=0.0791
-ifInBagtheadshold=70

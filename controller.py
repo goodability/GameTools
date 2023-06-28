@@ -20,9 +20,10 @@ isHoldBreath=False
 is_left_button_pressed=False
 gun=None
 logging=Logging().getLogging()
-
+is_open_mirror=False#按下鼠标右键代表按下右键
+imgcoper=imageCoper()
 def on_press(key):
-    global STATUS,gun,isSquat,isGrovel,isHoldBreath,fittingWeights
+    global STATUS,gun,isSquat,isGrovel,isHoldBreath,fittingWeights,is_open_mirror
     try:
         if key==Key.caps_lock:
             STATUS=STATUS*-1
@@ -41,7 +42,6 @@ def on_press(key):
                 gun="ace"
             #识别配件
             elif key==Key.tab:
-                imgcoper=imageCoper()
                 fittingWeights=imgcoper.classfyAllFitting()
             #蹲下
             elif str(key)=="'c'" or str(key)=="'C'":
@@ -65,7 +65,7 @@ def on_press(key):
                 isHoldBreath=True
             #重置人物姿态，站立，不屏息
             elif key==Key.enter:
-                isGrovel,isHoldBreath,isSquat=posture.resetPosture(isGrovel,isHoldBreath,isSquat)
+                [isGrovel,isHoldBreath,isSquat,is_open_mirror]=posture.resetPosture(isGrovel,isHoldBreath,isSquat,is_open_mirror)
                 logging.info("重置人物姿态")
     except:
         logging.error("未知错误...")
@@ -75,11 +75,20 @@ def on_release(key):
         isHoldBreath=False
 def on_click(x,y,button,pressed):
     if STATUS==1:
-        global is_left_button_pressed
+        global is_left_button_pressed,is_open_mirror
         if button == mouse.Button.left:
             is_left_button_pressed = pressed
-            if pressed:
+            if pressed and is_open_mirror:
                 ThreadPool.pool.submit(moveMouse)
+        elif button==mouse.Button.right:
+            BagImg=imgcoper.getBagImg()
+            ifInbag=imgcoper.classIsInBag(BagImg)
+            if not ifInbag:
+                if is_open_mirror:
+                    is_open_mirror=False
+                else:
+                    is_open_mirror=True
+
 def getGunData():
     global gun,isSquat,isGrovel,isHoldBreath,fittingWeights
     if gun=="m762":

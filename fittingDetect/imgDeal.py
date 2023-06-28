@@ -5,18 +5,31 @@ import cv2
 import pyautogui
 from skimage.metrics import structural_similarity
 import numpy as np
-from config import fittingConfig,globalConfig
+from config import fittingConfig,globalConfig,personConfig
 from fittingDetect.fittingWeights import getFittingWeights
+from person import posture
 class imageCoper:
     def __init__(self):
-        self.screenWidth,self.screenHeight=pyautogui.size()
-        # self.screenWidth, self.screenHeight = 2560,1440
+        # self.screenWidth,self.screenHeight=pyautogui.size()
+        self.screenWidth, self.screenHeight = globalConfig.screenWidth,globalConfig.screenHeight
     def getPic(self,**kwargs):
         if "img" in kwargs.keys():
             return kwargs["img"]
         img=pyautogui.screenshot()
         img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        img=self.adaptAllScreen(img)
         return img
+    def adaptAllScreen(self,img):
+        if self.screenWidth!=globalConfig.screenWidth or self.screenHeight!=globalConfig.screenHeight:
+            img=cv2.resize(img,(globalConfig.screenWidth,globalConfig.screenHeight))
+        return img
+    def getBagImg(self):
+        screenImg = self.getPic()
+        isOpenBagImg=screenImg[int(self.screenHeight * globalConfig.judgeBagBoxYmin):
+                            int(self.screenHeight * globalConfig.judgeBagBoxYmax),
+                            int(self.screenWidth * globalConfig.judgeBagBoxXmin):
+                            int(self.screenWidth * globalConfig.judgeBagBoxXmax)]
+        return isOpenBagImg
     def getFittings(self,**kwargs):
         screenImg=self.getPic(**kwargs)
         self.muzzleImg=screenImg[int(self.screenHeight*fittingConfig.muzzleComensator1Ymin):
@@ -31,15 +44,9 @@ class imageCoper:
                             int(self.screenHeight*fittingConfig.stock1Ymax),
                             int(self.screenWidth*fittingConfig.stock1Xmin):
                             int(self.screenWidth*fittingConfig.stock1Xmax)]
-        self.isOpenBagImg=screenImg[int(self.screenHeight * globalConfig.judgeBagBoxYmin):
-                            int(self.screenHeight * globalConfig.judgeBagBoxYmax),
-                            int(self.screenWidth * globalConfig.judgeBagBoxXmin):
-                            int(self.screenWidth * globalConfig.judgeBagBoxXmax)]
-        # cv2.imshow("compen",self.muzzleImg)
-        # cv2.imshow("grip",self.gripImg)
-        # cv2.imshow("stock",self.stockImg)
-        # cv2.waitKey(0)
-    def compareSimliar(self,imgGray,moduleImgGray):
+
+    @staticmethod
+    def compareSimliar(imgGray,moduleImgGray):
         score, diff = structural_similarity(imgGray, moduleImgGray, full=True)
         return score*100
     def classfyOneFitingByType(self,img,fittingType):
@@ -60,21 +67,23 @@ class imageCoper:
             return "None","None"
         else:
             return fittingScoredic[0][0],fittingScoredic[0][1]
-    def classIsInBag(self,img):
+    @staticmethod
+    def classIsInBag(img):
         moduleImgPath = "./data/constant/"
         moduleImgname=os.listdir(moduleImgPath)[0]
         moduleImg=cv2.imread(moduleImgPath+moduleImgname)
         moduleImgGray=cv2.cvtColor(moduleImg,cv2.COLOR_RGB2GRAY)
         imgGray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-        score=self.compareSimliar(imgGray,moduleImgGray)
-        if score<globalConfig.ifInBagtheadshold:
+        score=imageCoper.compareSimliar(imgGray,moduleImgGray)
+        if score<personConfig.ifInBagtheadshold:
             return False
         else:
             return True
 
     def classfyAllFitting(self,**kwargs):
         self.getFittings(**kwargs)
-        ifInbag = self.classIsInBag(self.isOpenBagImg)
+        isOpenBagImg=self.getBagImg()
+        ifInbag = self.classIsInBag(isOpenBagImg)
         fittingWeights=1
         if ifInbag:
             logging.info("打开背包")
@@ -88,12 +97,3 @@ class imageCoper:
         else:
             logging.info("关闭背包")
         return fittingWeights
-            # imgGray=cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
-            # moduleImgGray=cv2.cvtColor(moduleImg,cv2.COLOR_RGB2GRAY)
-            # moduleImgGray=cv2.resize(moduleImgGray,(imgGray.shape[1],imgGray.shape[0]))
-            # ret,thread1=cv2.threshold(imgGray,70,255,cv2.THRESH_BINARY)
-            # ret,thread2=cv2.threshold(moduleImgGray,70,255,cv2.THRESH_BINARY)
-            # score, diff = structural_similarity(thread1, thread2, full=True)
-            # score1,diff1=structural_similarity(imgGray, moduleImgGray, full=True)
-            # print("Similarity Score: {:.3f}%".format(score * 100))
-            # print("Similarity Score gray: {:.3f}%".format(score1 * 100))
