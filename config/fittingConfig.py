@@ -19,7 +19,7 @@ stock1Ymax=0.2555
 '''
     枪口系列
 '''
-muzzleComensatorName="muzzleCompensator"
+muzzleComensatorName="compensator"
 muzzleComensator=0.85
 noFireName="noFirer"
 noFirer=0.90

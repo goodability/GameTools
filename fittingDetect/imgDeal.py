@@ -94,6 +94,7 @@ class imageCoper:
             logging.info("枪口类型为:"+muzzleType+"识别准确率为:"+str(muzzleScore)+"%")
             logging.info("握把类型为:"+gripType+"识别准确率为:"+str(gripScore)+"%")
             logging.info("枪托类型为:"+stockType+"识别准确率为:"+str(stockScore)+"%")
+            return fittingWeights
         else:
             logging.info("关闭背包")
-        return fittingWeights
+
