@@ -45,9 +45,10 @@ def on_press(key):
             elif key==Key.tab:
                 BagImg = imgcoper.getBagImg()
                 ifInBag = imgcoper.classIsInBag(BagImg)
-                fittingActualWeights=imgcoper.classfyAllFitting()
-                if fittingActualWeights is not None:
-                    fittingWeights=fittingActualWeights
+                if ifInBag:
+                    fittingActualWeights=imgcoper.classfyAllFitting()
+                    if fittingActualWeights is not None:
+                        fittingWeights=fittingActualWeights
                 #按了tab会自动关闭瞄准镜
                 is_open_mirror=False
             #换弹会自动关闭瞄准镜
