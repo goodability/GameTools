@@ -12,6 +12,8 @@ class imageCoper:
     def __init__(self):
         # self.screenWidth,self.screenHeight=pyautogui.size()
         self.screenWidth, self.screenHeight = globalConfig.screenWidth,globalConfig.screenHeight
+        self.loadOneFittingModulesByType()
+        self.loadCommonModuleByType()
     def getPic(self,**kwargs):
         if "img" in kwargs.keys():
             return kwargs["img"]
@@ -49,32 +51,66 @@ class imageCoper:
     def compareSimliar(imgGray,moduleImgGray):
         score, diff = structural_similarity(imgGray, moduleImgGray, full=True)
         return score*100
+    def loadOneFittingModulesByType(self):
+        moduleFittingImgPath = "./data/fittingModule/"
+        muzzleFittingPath=moduleFittingImgPath+"muzzle/"
+        gripFittingPath=moduleFittingImgPath+"grip/"
+        stockFittingPath=moduleFittingImgPath+"stock/"
+        muzzleFittingNames=os.listdir(muzzleFittingPath)
+        gripFittingNames=os.listdir(gripFittingPath)
+        stockFittingNames=os.listdir(stockFittingPath)
+        self.muzzleModuleImgDic= {}
+        self.gripModuleImgDic={}
+        self.stockModuleImgDic={}
+        for fitting in tqdm(muzzleFittingNames,unit="img",desc="载入枪口信息"):
+            fittingImg=cv2.imread(muzzleFittingPath+fitting)
+            self.muzzleModuleImgDic[fitting.split(".")[0]]=fittingImg
+        for fitting in tqdm(gripFittingNames,unit="img",desc="载入握把信息"):
+            fittingImg=cv2.imread(gripFittingPath+fitting)
+            self.gripModuleImgDic[fitting.split(".")[0]]=fittingImg
+        for fitting in tqdm(stockFittingNames,unit="img",desc="载入枪托信息"):
+            fittingImg=cv2.imread(stockFittingPath+fitting)
+            self.stockModuleImgDic[fitting.split(".")[0]]=fittingImg
+    def loadCommonModuleByType(self):
+        moduleImgPath = "./data/constant/"
+        moduleImgname = os.listdir(moduleImgPath)[0]
+        moduleImg=cv2.imread(moduleImgPath+moduleImgname)
+        self.ifInBagImg = cv2.cvtColor(moduleImg, cv2.COLOR_RGB2GRAY)
+        logging.info("载入背包验证模块")
+
     def classfyOneFitingByType(self,img,fittingType):
-        moduleFittingImgPath="./data/fittingModule/"+fittingType
-        oneFittingModules=os.listdir(moduleFittingImgPath)
         fittingScoredic= {}
         imgGray=cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
-        for moduleFitting in tqdm(oneFittingModules):
-            moduleImg=cv2.imread(moduleFittingImgPath+"/"+moduleFitting)
-            moduleImgGray=cv2.cvtColor(moduleImg,cv2.COLOR_RGB2GRAY)
-            moduleImgGray=cv2.resize(moduleImgGray,(img.shape[1],img.shape[0]))
-            ret1,imgThread=cv2.threshold(imgGray,70,255,cv2.THRESH_BINARY)
-            ret1, moduleImgThread = cv2.threshold(moduleImgGray, 70, 255, cv2.THRESH_BINARY)
-            score=self.compareSimliar(imgGray,moduleImgGray)
-            fittingScoredic[moduleFitting.split(".")[0]]=score
+        if fittingType=="muzzle":
+            for moduleImgName in tqdm(self.muzzleModuleImgDic.keys()):
+                moduleImg=self.muzzleModuleImgDic[moduleImgName]
+                # ret1,imgThread=cv2.threshold(imgGray,70,255,cv2.THRESH_BINARY)
+                # ret1, moduleImgThread = cv2.threshold(moduleImg, 70, 255, cv2.THRESH_BINARY)
+                score=self.compareSimliar(imgGray,moduleImg)
+                fittingScoredic[moduleImgName]=score
+        elif fittingType=="grip":
+            for moduleImgName in tqdm(self.gripModuleImgDic.keys()):
+                moduleImg=self.gripModuleImgDic[moduleImgName]
+                # ret1,imgThread=cv2.threshold(imgGray,70,255,cv2.THRESH_BINARY)
+                # ret1, moduleImgThread = cv2.threshold(moduleImg, 70, 255, cv2.THRESH_BINARY)
+                score=self.compareSimliar(imgGray,moduleImg)
+                fittingScoredic[moduleImgName]=score
+        elif fittingType=="stock":
+            for moduleImgName in tqdm(self.stockModuleImgDic.keys()):
+                moduleImg=self.stockModuleImgDic[moduleImgName]
+                # ret1,imgThread=cv2.threshold(imgGray,70,255,cv2.THRESH_BINARY)
+                # ret1, moduleImgThread = cv2.threshold(moduleImg, 70, 255, cv2.THRESH_BINARY)
+                score=self.compareSimliar(imgGray,moduleImg)
+                fittingScoredic[moduleImgName]=score
         fittingScoredic=sorted(fittingScoredic.items(),key=lambda x:x[1],reverse=True)
         if fittingScoredic[0][1]<fittingConfig.fittingDetectTheadShold:
             return "None","None"
         else:
             return fittingScoredic[0][0],fittingScoredic[0][1]
-    @staticmethod
-    def classIsInBag(img):
-        moduleImgPath = "./data/constant/"
-        moduleImgname=os.listdir(moduleImgPath)[0]
-        moduleImg=cv2.imread(moduleImgPath+moduleImgname)
-        moduleImgGray=cv2.cvtColor(moduleImg,cv2.COLOR_RGB2GRAY)
+
+    def classIsInBag(self,img):
         imgGray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-        score=imageCoper.compareSimliar(imgGray,moduleImgGray)
+        score=imageCoper.compareSimliar(imgGray,self.ifInBagImg)
         if score<personConfig.ifInBagtheadshold:
             return False
         else:

@@ -3,7 +3,7 @@ import pydirectinput
 '''
     系统全局配置参数
 '''
-loggingLevel=logging.INFO
+loggingLevel=logging.DEBUG
 loggingFormat="[%(asctime)s]---%(name)s---%(levelname)s---%(thread)d---%(message)s"
 threadPoolMax=6
 pydirectinput.PAUSE = 0.0
