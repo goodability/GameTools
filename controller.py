@@ -20,11 +20,12 @@ isHoldBreath=False
 is_left_button_pressed=False
 ifInBag=False
 gun=None
+ifOpenMap=False
 logging=Logging().getLogging()
 is_open_mirror=False#按下鼠标右键代表按下右键
 imgcoper=imageCoper()
 def on_press(key):
-    global STATUS,gun,isSquat,isGrovel,isHoldBreath,fittingWeights,is_open_mirror,ifInBag
+    global STATUS,gun,isSquat,isGrovel,isHoldBreath,fittingWeights,is_open_mirror,ifInBag,ifOpenMap
     try:
         if key==Key.caps_lock:
             STATUS=STATUS*-1
@@ -43,6 +44,7 @@ def on_press(key):
                 gun="ace"
             #识别配件
             elif key==Key.tab:
+                time.sleep(0.03)
                 BagImg = imgcoper.getBagImg()
                 ifInBag = imgcoper.classIsInBag(BagImg)
                 if ifInBag:
@@ -68,6 +70,17 @@ def on_press(key):
                     isSquat=False
                 else:
                     isGrovel=False
+            #打开地图
+            elif str(key)=="'m'" or str(key)=="'M'":
+                time.sleep(0.03)
+                mapImg=imgcoper.getMapImg()
+                ifOpenMap=imgcoper.classIsOpenMap(mapImg)
+                #如果检测到打开地图了，就直接暂时关掉开关，也就相当于屏蔽掉鼠标按键
+                if ifOpenMap:
+                    STATUS=-1
+                #如果没检测到打开地图就意味着是关闭地图，就打开开关1m
+                else:
+                    STATUS=1
             elif key==Key.space:
                 isGrovel=False
                 isSquat=False
