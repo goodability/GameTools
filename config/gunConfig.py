@@ -11,3 +11,11 @@ ace_fire_rate=0.086
 ak_step=np.array([40, 28, 29, 28, 42, 43, 42, 43, 48, 48, 46, 47, 52, 53, 52, 53, 52, 53, 52, 53, 52, 53, 52, 53,
                       52, 53, 52, 53, 53, 54, 54, 54, 53, 54, 54, 54, 67, 68, 67, 68])
 ak_fire_rate=0.1
+
+#一号枪位位置参数
+gunPostionXmin=0.7132
+gunPostionYmin=0.0875
+gunPostionXmax=0.78125
+gunPostionYmax=0.1180
+
+gunTypeThreashold=80

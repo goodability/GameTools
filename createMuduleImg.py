@@ -1,7 +1,7 @@
 import os
 import cv2
 from tqdm import tqdm
-from config import fittingConfig,globalConfig
+from config import fittingConfig,globalConfig,gunConfig
 
 def getMuzzlePart(img):
     muzzleImg = img[int(globalConfig.screenHeight * fittingConfig.muzzleComensator1Ymin):
@@ -33,6 +33,12 @@ def getJudgeMapPart(img):
                int(globalConfig.screenWidth * globalConfig.judgeOpenMapXmin):
                int(globalConfig.screenWidth * globalConfig.judgeOpenMapXmax)]
     return isMapImg
+def getGunPostionPart(img):
+    gunNameImg=img[int(globalConfig.screenHeight * gunConfig.gunPostionYmin):
+                int(globalConfig.screenHeight * gunConfig.gunPostionYmax),
+               int(globalConfig.screenWidth * gunConfig.gunPostionXmin):
+               int(globalConfig.screenWidth * gunConfig.gunPostionXmax)]
+    return gunNameImg
 def createFittingPart(originImgPath,savePath):
     imgNameList = os.listdir(originImgPath)
     print(imgNameList)
@@ -62,10 +68,19 @@ def createMapPart(oriPath,savePath):
     isOpenMapImg=getJudgeMapPart(img)
     cv2.imwrite(savePath+"/constant/judgeMap.png",isOpenMapImg)
     print("成功构建判断是否打开地图模板")
+def createGunTypeModule(oriPath,savePath):
+    m762OriImgPath=oriPath+"/nofire+vec.png"
+    aceOriImgPath=oriPath+"/5.png"
+    gunList=[m762OriImgPath,aceOriImgPath]
+    for r,path in enumerate(gunList):
+        img=cv2.imread(path)
+        gunNameImg=getGunPostionPart(img)
+        cv2.imwrite(savePath+"/gunTypeModules/"+str(r)+".png",gunNameImg)
 if __name__ == '__main__':
     originImgPath="./data"
     savePath="./data"
     imgNameList=os.listdir(originImgPath)
-    createFittingPart(originImgPath,savePath)
-    createBagBoxPart(originImgPath,savePath)
-    createMapPart(originImgPath,savePath)
+    # createFittingPart(originImgPath,savePath)
+    # createBagBoxPart(originImgPath,savePath)
+    # createMapPart(originImgPath,savePath)
+    createGunTypeModule(originImgPath,savePath)

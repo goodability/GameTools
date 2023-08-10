@@ -10,7 +10,8 @@ from pynput import keyboard,mouse
 from pynput.mouse import Controller
 from threadPool import ThreadPool
 import pydirectinput
-from fittingDetect.imgDeal import imageCoper
+from fittingDetect.fittingDeal import imageCoper
+from commonDetect.globalDetect import GlobalDetector
 STATUS=-1
 fittingWeights=1
 isSquat=False
@@ -19,11 +20,12 @@ holdKeyFlag=False
 isHoldBreath=False
 is_left_button_pressed=False
 ifInBag=False
-gun=None
+gun="m962"
 ifOpenMap=False
 logging=Logging().getLogging()
 is_open_mirror=False#按下鼠标右键代表按下右键
 imgcoper=imageCoper()
+globalDetector=GlobalDetector()
 def on_press(key):
     global STATUS,gun,isSquat,isGrovel,isHoldBreath,fittingWeights,is_open_mirror,ifInBag,ifOpenMap
     try:
@@ -36,19 +38,14 @@ def on_press(key):
         #开关打开才能选择枪械
         if STATUS==1:
             # print(key),type(key)
-            if key==Key.end or str(key)=='<97>':
-                logging.info("选择枪械m762！")
-                gun="m762"
-            elif key==Key.down or str(key)=='<98>':
-                logging.info("选择枪械ace！")
-                gun="ace"
             #识别配件
-            elif key==Key.tab:
+            if key==Key.tab:
                 time.sleep(0.03)
-                BagImg = imgcoper.getBagImg()
-                ifInBag = imgcoper.classIsInBag(BagImg)
+                screenImg=globalDetector.getPic()
+                BagImg = globalDetector.getBagImg(screenImg)
+                ifInBag = globalDetector.classIsInBag(BagImg)
                 if ifInBag:
-                    fittingActualWeights=imgcoper.classfyAllFitting()
+                    fittingActualWeights,gun=imgcoper.classfyAllFitting(img=screenImg)
                     if fittingActualWeights is not None:
                         fittingWeights=fittingActualWeights
                 #按了tab会自动关闭瞄准镜
@@ -73,14 +70,10 @@ def on_press(key):
             #打开地图
             elif str(key)=="'m'" or str(key)=="'M'":
                 time.sleep(0.03)
-                mapImg=imgcoper.getMapImg()
-                ifOpenMap=imgcoper.classIsOpenMap(mapImg)
-                #如果检测到打开地图了，就直接暂时关掉开关，也就相当于屏蔽掉鼠标按键
-                if ifOpenMap:
-                    STATUS=-1
-                #如果没检测到打开地图就意味着是关闭地图，就打开开关1m
-                else:
-                    STATUS=1
+                mapImg=globalDetector.getMapImg()
+                ifOpenMap=globalDetector.classIsOpenMap(mapImg)
+                #如果检测到打开地图了，就直接暂时关掉开关，也就相当于屏蔽掉鼠标按键和键盘按键
+            #按下空格姿态会变成直立
             elif key==Key.space:
                 isGrovel=False
                 isSquat=False
@@ -100,13 +93,13 @@ def on_release(key):
         isHoldBreath=False
 def on_click(x,y,button,pressed):
     if STATUS==1:
-        global is_left_button_pressed,is_open_mirror,ifInBag
+        global is_left_button_pressed,is_open_mirror,ifInBag,ifOpenMap
         if button == mouse.Button.left:
             is_left_button_pressed = pressed
-            if pressed and is_open_mirror and not ifInBag:
+            if pressed and is_open_mirror and not ifInBag and not ifOpenMap:
                 ThreadPool.pool.submit(moveMouse)
         elif button==mouse.Button.right:
-            if not ifInBag and pressed==True:
+            if not ifInBag and not ifOpenMap and pressed==True:
                 if is_open_mirror==False:
                     is_open_mirror=True
                 else:
