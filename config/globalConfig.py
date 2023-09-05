@@ -5,7 +5,7 @@ import pydirectinput
 '''
 loggingLevel=logging.DEBUG
 loggingFormat="[%(asctime)s]---%(name)s---%(levelname)s---%(thread)d---%(message)s"
-threadPoolMax=6
+threadPoolMax=15
 pydirectinput.PAUSE = 0.0
 stridesNum=6
 
@@ -30,3 +30,9 @@ judgeOpenMapYmax=0.9208
 
 #用以判断是否打开地图阈值
 ifOpenMaptheadshold=80
+
+#修正开枪间隔睡眠时间参数,3ms
+sleepBiase=3
+
+#游戏内垂直灵敏度
+vertical=1.38

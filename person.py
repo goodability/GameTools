@@ -1,17 +1,17 @@
-from config import personConfig
+from config import personConfig,gunConfig
 import os,cv2
 class posture:
     def __init__(self):
         pass
     @staticmethod
-    def getPostureWeight(isGrovel,isHoldShift,isSquat):
+    def getPostureWeight(isGrovel,isHoldShift,isSquat,gunType):
         verticalWeights=1
         if isGrovel:
-            verticalWeights=personConfig.grovel
+            verticalWeights=personConfig.PostureWeight[gunType]["posture"]["down"]
         elif isSquat:
-            verticalWeights=personConfig.squat
+            verticalWeights=personConfig.PostureWeight[gunType]["posture"]["squat"]
         if isHoldShift:
-            verticalWeights=verticalWeights*personConfig.holdBreath
+            verticalWeights=verticalWeights*personConfig.PostureWeight[gunType]["hold"]
         return verticalWeights
     @staticmethod
     def resetPosture(*args):

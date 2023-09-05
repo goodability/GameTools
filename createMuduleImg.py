@@ -69,15 +69,13 @@ def createMapPart(oriPath,savePath):
     cv2.imwrite(savePath+"/constant/judgeMap.png",isOpenMapImg)
     print("成功构建判断是否打开地图模板")
 def createGunTypeModule(oriPath,savePath):
-    m762OriImgPath=oriPath+"/nofire+vec.png"
-    aceOriImgPath=oriPath+"/5.png"
-    gunList=[m762OriImgPath,aceOriImgPath]
+    gunList=os.listdir(oriPath)
     for r,path in enumerate(gunList):
-        img=cv2.imread(path)
+        img=cv2.imread(oriPath+"/"+path)
         gunNameImg=getGunPostionPart(img)
-        cv2.imwrite(savePath+"/gunTypeModules/"+str(r)+".png",gunNameImg)
+        cv2.imwrite(savePath+"/gunTypeModules/"+path,gunNameImg)
 if __name__ == '__main__':
-    originImgPath="./data"
+    originImgPath=r"E:\temp"
     savePath="./data"
     imgNameList=os.listdir(originImgPath)
     # createFittingPart(originImgPath,savePath)
