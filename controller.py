@@ -131,38 +131,39 @@ def moveMouse():
     global is_left_button_pressed,gun
     gun_step,shootRate=getGunData()
     for step in gun_step:
-        time_start=time.perf_counter()*1000
+        time_start=time.perf_counter()
         step=int(step)
         stepRemain=step
         eachNormalStep = step // globalConfig.stridesNum
         eachSleepTime=shootRate/globalConfig.stridesNum
         x_start, y_start = pyautogui.position()
-        print("开始位置",x_start, y_start,"每次小步长",eachNormalStep)
         duration_sum=0
         if is_left_button_pressed:
-            while stepRemain>0:
-                #为了更加精准的控制开枪间隔，每次开枪间隔都记录时间
-                fireStart=time.perf_counter()
+            # time_fire=time.perf_counter()
+            # timeList=[]
+            # exceptTimeList=[]
+            for index in range(globalConfig.stridesNum):
                 if stepRemain>=eachNormalStep:
+                    fireStart = time.perf_counter()
                     pydirectinput.moveRel(0, eachNormalStep,relative=True)
                     stepRemain-=eachNormalStep
+                    fireEnd = time.perf_counter()
+                    # 记录每次移动鼠标所花费的时间，用于修正每阶段移动的睡眠时间
+                    duration = fireEnd - fireStart
+                    duration_sum = duration_sum + duration
+                    # 使用重写的sleep函数，实现微秒级睡眠精度
+                    wpt.sleep(eachSleepTime - duration)
+                    # exceptTimeList.append((eachSleepTime - duration) * 1000)
+                    # timeMoveEnd = time.perf_counter()
+                    # timeList.append((timeMoveEnd - fireStart) * 1000)
                 else:
                     pydirectinput.moveRel(0, stepRemain,relative=True)
                     stepRemain-=eachNormalStep
-                    break
-                x, y = pyautogui.position()
-                fireEnd=time.perf_counter()
-                #记录每次移动鼠标所花费的时间，用于修正每阶段移动的睡眠时间
-                duration=fireEnd-fireStart
-                duration_sum=duration_sum+duration
-                #使用重写的sleep函数，实现微秒级睡眠精度
-                wpt.sleep(eachSleepTime-duration)
-            # eachStepMove(step,shootRate)
             x, y = pyautogui.position()
             print("结束位置", x, y,"移动步长：",y-y_start,"期望移动步长：",step)
-            time_end = time.perf_counter()*1000
+            time_end = time.perf_counter()
             print("duration_sum",duration_sum*1000,"ms")
-            print("移动时长：", time_end - time_start, "ms", "期望移动时长", shootRate * 1000, "ms")
+            print("移动时长：", (time_end - time_start)*1000, "ms", "期望移动时长", shootRate * 1000, "ms")
         else:
             break
 

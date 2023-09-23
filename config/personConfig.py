@@ -10,7 +10,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.45,
+            "grovel": 0.45,
             "squat": 0.75
         }
     },
@@ -18,7 +18,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.5,
+            "grovel": 0.5,
             "squat": 0.80
         }
     },
@@ -26,7 +26,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.45,
+            "grovel": 0.45,
             "squat": 0.75
         }
     },
@@ -35,7 +35,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.55,
+            "grovel": 0.55,
             "squat": 0.80
         }
     },
@@ -44,7 +44,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.55,
+            "grovel": 0.55,
             "squat": 0.8
         }
     },
@@ -53,7 +53,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.50,
+            "grovel": 0.50,
             "squat": 0.75
         }
     },
@@ -62,7 +62,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.45,
+            "grovel": 0.45,
             "squat": 0.67
         }
     },
@@ -71,7 +71,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.5,
+            "grovel": 0.5,
             "squat": 0.75
         }
     },
@@ -80,7 +80,7 @@ PostureWeight = {
         "hold": 1.28,
         # 姿势
         "posture": {
-            "down": 0.5,
+            "grovel": 0.5,
             "squat": 0.65
         }
     },
@@ -89,7 +89,7 @@ PostureWeight = {
         "hold": 1.15,
         # 姿势
         "posture": {
-            "down": 0.65,
+            "grovel": 0.65,
             "squat": 0.75
         }
     },
@@ -98,7 +98,7 @@ PostureWeight = {
         "hold": 1.28,
         # 姿势
         "posture": {
-            "down": 0.68,
+            "grovel": 0.68,
             "squat": 0.78
         }
     },
@@ -107,7 +107,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.5,
+            "grovel": 0.5,
             "squat": 0.78
         }
     },
@@ -116,7 +116,7 @@ PostureWeight = {
         "hold": 1.33,
         # 姿势
         "posture": {
-            "down": 0.53,
+            "grovel": 0.53,
             "squat": 0.75
         }
     },
@@ -125,7 +125,7 @@ PostureWeight = {
         "hold": 1.28,
         # 姿势
         "posture": {
-            "down": 0.58,
+            "grovel": 0.58,
             "squat": 0.68
         }
     },
@@ -134,7 +134,7 @@ PostureWeight = {
         "hold": 1.28,
         # 姿势
         "posture": {
-            "down": 0.64,
+            "grovel": 0.64,
             "squat": 0.74
         }
     },
@@ -143,7 +143,7 @@ PostureWeight = {
         "hold": 1.28,
         # 姿势
         "posture": {
-            "down": 0.6,
+            "grovel": 0.6,
             "squat": 0.75
         }
     },
@@ -152,7 +152,7 @@ PostureWeight = {
         "hold": 1.28,
         # 姿势
         "posture": {
-            "down": 0.64,
+            "grovel": 0.64,
             "squat": 0.74
         }
     },
