@@ -7,7 +7,7 @@ loggingLevel=logging.DEBUG
 loggingFormat="[%(asctime)s]---%(name)s---%(levelname)s---%(thread)d---%(message)s"
 threadPoolMax=15
 pydirectinput.PAUSE = 0.0
-stridesNum=6
+stridesNum=5
 
 screenCatchXmin=0.6835
 screenCatchYmin=0.0694

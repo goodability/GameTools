@@ -1,36 +1,46 @@
-from config import fittingConfig
+from config import fittingConfig,gunConfig
+
 class getFittingWeights:
     def __init__(self):
         pass
     @staticmethod
-    def getWeights(muzzleType,gripType,stockType):
+    def getWeights(gun,muzzleType,gripType,stockType):
         AllWeights=1
         muzzleWeights=1
         gripWeights=1
         stockWeights=1
         #判断枪口类型权重
-        if muzzleType==fittingConfig.muzzleComensatorName:
-            muzzleWeights=fittingConfig.muzzleComensator
-        elif muzzleType==fittingConfig.noFireName:
-            muzzleWeights=fittingConfig.noFirer
-        elif muzzleType==fittingConfig.silencerName:
-            muzzleWeights=fittingConfig.silencer
+        try:
+            if muzzleType==fittingConfig.muzzleComensatorName:
+                muzzleWeights=gunConfig.guns[gun]["muzzle"]["compensator"]
+            elif muzzleType==fittingConfig.noFireName:
+                muzzleWeights=gunConfig.guns[gun]["muzzle"]["noFirer"]
+            elif muzzleType==fittingConfig.silencerName:
+                muzzleWeights=gunConfig.guns[gun]["muzzle"]["silencer"]
+        except:
+            muzzleWeights=1
         #判断握把权重
-        if gripType==fittingConfig.verticalGripName:
-            gripWeights=fittingConfig.verticalGrip
-        elif gripType==fittingConfig.lightGripName:
-            gripWeights=fittingConfig.lightGrip
-        elif gripType==fittingConfig.thumbGripName:
-            gripWeights=fittingConfig.thumbGrip
-        elif gripType==fittingConfig.redGripName:
-            gripWeights=fittingConfig.redGrip
-        elif gripType==fittingConfig.triangularGripName:
-            gripWeights=fittingConfig.triangularGrip
+        try:
+            if gripType==fittingConfig.verticalGripName:
+                gripWeights=gunConfig.guns[gun]["grip"]["verticalGrip"]
+            elif gripType==fittingConfig.lightGripName:
+                gripWeights=gunConfig.guns[gun]["grip"]["lightGrip"]
+            elif gripType==fittingConfig.thumbGripName:
+                gripWeights=gunConfig.guns[gun]["grip"]["thumbGrip"]
+            elif gripType==fittingConfig.redGripName:
+                gripWeights=gunConfig.guns[gun]["grip"]["redGrip"]
+            elif gripType==fittingConfig.triangularGripName:
+                gripWeights=gunConfig.guns[gun]["grip"]["triangularGrip"]
+        except:
+            gripWeights=1
         #判断枪托权重
-        if stockType==fittingConfig.lightStockName:
-            stockWeights=fittingConfig.lightStock
-        elif stockType==fittingConfig.heavyStockName:
-            stockWeights=fittingConfig.heavyStock
+        try:
+            if stockType==fittingConfig.lightStockName:
+                stockWeights=gunConfig.guns[gun]["stock"]["lightStock"]
+            elif stockType==fittingConfig.heavyStockName:
+                stockWeights=gunConfig.guns[gun]["stock"]["heavyStock"]
+        except:
+            stockWeights=1
         muzzleWeights=1-muzzleWeights
         gripWeights=1-gripWeights
         stockWeights=1-stockWeights

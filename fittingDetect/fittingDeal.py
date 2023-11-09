@@ -119,11 +119,11 @@ class imageCoper(BaseDetector):
         muzzleType,muzzleScore=self.classfyOneFitingByType(self.muzzleImg,"muzzle")
         gripType,gripScore=self.classfyOneFitingByType(self.gripImg,"grip")
         stockType,stockScore=self.classfyOneFitingByType(self.stockImg,"stock")
-        fittingWeights=getFittingWeights.getWeights(muzzleType,gripType,stockType)
-        logging.info("枪口类型为:"+muzzleType+"识别准确率为:"+str(muzzleScore)+"%")
-        logging.info("握把类型为:"+gripType+"识别准确率为:"+str(gripScore)+"%")
-        logging.info("枪托类型为:"+stockType+"识别准确率为:"+str(stockScore)+"%")
         gunType,gunScore=self.classfyGun(self.gunNameImg)
         logging.info("枪械为:"+gunType+"识别准确率为:"+str(gunScore)+"%")
+        fittingWeights = getFittingWeights.getWeights(gunType, muzzleType, gripType, stockType)
+        logging.info("枪口类型为:" + muzzleType + "识别准确率为:" + str(muzzleScore) + "%")
+        logging.info("握把类型为:" + gripType + "识别准确率为:" + str(gripScore) + "%")
+        logging.info("枪托类型为:" + stockType + "识别准确率为:" + str(stockScore) + "%")
         return fittingWeights,gunType
 

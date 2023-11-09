@@ -7,7 +7,7 @@ class posture:
     def getPostureWeight(isGrovel,isHoldShift,isSquat,gunType):
         verticalWeights=1
         if isGrovel:
-            verticalWeights=personConfig.PostureWeight[gunType]["posture"]["down"]
+            verticalWeights=personConfig.PostureWeight[gunType]["posture"]["grovel"]
         elif isSquat:
             verticalWeights=personConfig.PostureWeight[gunType]["posture"]["squat"]
         if isHoldShift:

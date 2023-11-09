@@ -5,6 +5,7 @@ holdBreath=1.33
 squat=0.8
 grovel=0.6
 ifInBagtheadshold=70
+ifNoMirrorShoot=500
 PostureWeight = {
     "akm": {
         "hold": 1.33,

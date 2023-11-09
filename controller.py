@@ -10,7 +10,7 @@ import numpy as np
 from person import posture
 from pynput.keyboard import Key
 from config.log import Logging
-from config import gunConfig,globalConfig
+from config import gunConfig,globalConfig,personConfig
 from pynput import keyboard,mouse
 from pynput.mouse import Controller
 from threadPool import ThreadPool
@@ -28,6 +28,8 @@ ifInBag=False
 ifOpenMap=False
 logging=Logging().getLogging()
 is_open_mirror=False#按下鼠标右键代表按下右键
+right_button_press_time=0
+right_button_release_time=0
 imgcoper=imageCoper()
 globalDetector=GlobalDetector()
 def on_press(key):
@@ -97,17 +99,24 @@ def on_release(key):
         isHoldBreath=False
 def on_click(x,y,button,pressed):
     if STATUS==1:
-        global is_left_button_pressed,is_open_mirror,ifInBag,ifOpenMap
+        global is_left_button_pressed,is_open_mirror,ifInBag,ifOpenMap,right_button_press_time,right_button_release_time
         if button == mouse.Button.left:
             is_left_button_pressed = pressed
             if pressed and is_open_mirror and not ifInBag and not ifOpenMap:
                 ThreadPool.pool.submit(moveMouse)
         elif button==mouse.Button.right:
-            if not ifInBag and not ifOpenMap and pressed==True:
-                if is_open_mirror==False:
-                    is_open_mirror=True
+            if not ifInBag and not ifOpenMap:
+                if pressed==True:
+                    right_button_press_time=time.perf_counter()
                 else:
-                    is_open_mirror=False
+                    right_button_release_time=time.perf_counter()
+                    if is_open_mirror==False:
+                        holdTime=(right_button_release_time-right_button_press_time)*1000
+                        if holdTime<personConfig.ifNoMirrorShoot:
+                            is_open_mirror=True
+                    else:
+                        is_open_mirror=False
+
 
 def getGunData():
     global gun,isSquat,isGrovel,isHoldBreath,fittingWeights
@@ -139,13 +148,13 @@ def moveMouse():
         x_start, y_start = pyautogui.position()
         duration_sum=0
         if is_left_button_pressed:
-            # time_fire=time.perf_counter()
-            # timeList=[]
-            # exceptTimeList=[]
+            time_fire=time.perf_counter()
+            timeList=[]
+            exceptTimeList=[]
             for index in range(globalConfig.stridesNum):
                 if stepRemain>=eachNormalStep:
                     fireStart = time.perf_counter()
-                    pydirectinput.moveRel(0, eachNormalStep,relative=True)
+                    pydirectinput.moveRel(None, eachNormalStep,relative=True,disable_mouse_acceleration=True)
                     stepRemain-=eachNormalStep
                     fireEnd = time.perf_counter()
                     # 记录每次移动鼠标所花费的时间，用于修正每阶段移动的睡眠时间
@@ -157,7 +166,7 @@ def moveMouse():
                     # timeMoveEnd = time.perf_counter()
                     # timeList.append((timeMoveEnd - fireStart) * 1000)
                 else:
-                    pydirectinput.moveRel(0, stepRemain,relative=True)
+                    pydirectinput.moveRel(None, stepRemain,relative=True,disable_mouse_acceleration=True)
                     stepRemain-=eachNormalStep
             x, y = pyautogui.position()
             print("结束位置", x, y,"移动步长：",y-y_start,"期望移动步长：",step)
@@ -178,5 +187,6 @@ def listenKeyboard():
 def run():
     listenKeyboard()
     listenMouse()
+    pydirectinput.PAUSE=0.0
     while True:
         pass
