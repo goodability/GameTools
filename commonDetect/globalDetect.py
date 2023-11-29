@@ -8,9 +8,10 @@
 @Date    ：2023/8/9 22:39 
 @Email   ：WeiHao.fox@foxmail.com
 '''
-import cv2,logging
+import cv2
 from commonDetect.baseDetector import BaseDetector
 from config import globalConfig,personConfig
+from config.log import logging
 class GlobalDetector(BaseDetector):
     def __init__(self):
         super().__init__()

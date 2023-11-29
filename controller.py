@@ -1,7 +1,5 @@
-import random
-import threading
-import time
-import cv2
+import time,sys
+from GUI import app
 import pyautogui
 import win32api
 from utils.timeUtils import Timer
@@ -9,7 +7,7 @@ import win_precise_time as wpt
 import numpy as np
 from person import posture
 from pynput.keyboard import Key
-from config.log import Logging
+from config.log import logging
 from config import gunConfig,globalConfig,personConfig
 from pynput import keyboard,mouse
 from pynput.mouse import Controller
@@ -26,7 +24,6 @@ isHoldBreath=False
 is_left_button_pressed=False
 ifInBag=False
 ifOpenMap=False
-logging=Logging().getLogging()
 is_open_mirror=False#按下鼠标右键代表按下右键
 right_button_press_time=0
 right_button_release_time=0
@@ -185,8 +182,9 @@ def listenKeyboard():
     # with keyboard.Listener(on_press=on_press,on_release=onrealease) as keyboardlistener:
     #     keyboardlistener.join()
 def run():
-    listenKeyboard()
-    listenMouse()
+    ThreadPool.pool.submit(listenKeyboard)
+    ThreadPool.pool.submit(listenMouse)
     pydirectinput.PAUSE=0.0
-    while True:
-        pass
+    sys.exit(app.exec_())
+    # while True:
+    #     pass

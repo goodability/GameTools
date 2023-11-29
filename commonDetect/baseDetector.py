@@ -9,7 +9,7 @@
 @Email   ：WeiHao.fox@foxmail.com
 '''
 from config import globalConfig
-from config.log import Logging
+from config.log import logging
 import cv2,pyautogui
 import numpy as np
 from skimage.metrics import structural_similarity

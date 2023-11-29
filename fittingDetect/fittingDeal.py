@@ -1,5 +1,4 @@
-import logging
-from config.log import Logging
+from config.log import logging
 import os
 from tqdm import tqdm
 import cv2
