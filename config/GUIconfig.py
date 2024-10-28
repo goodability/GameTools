@@ -1,0 +1,10 @@
+positionX=0
+positionY=15
+guiSizeX=470
+guiSizeY=150
+windowsAlpha=0.6
+textcolor="orange"
+fontType="Helvetica"
+fontSize=14
+fontBold="bold"#如果不想使用加粗字体，置为空字符串
+importantTextColor="red"

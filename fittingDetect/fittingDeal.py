@@ -1,5 +1,4 @@
-import logging
-from config.log import Logging
+from config.log import logging
 import os
 from tqdm import tqdm
 import cv2
@@ -13,8 +12,7 @@ class imageCoper(BaseDetector):
         super().__init__()
         self.loadFittingModulesByType()
         self.loadGunsModule()
-        self.globalDetector=GlobalDetector()
-
+        # self.globalDetector=GlobalDetector()
     def getFittings(self,**kwargs):
         screenImg=self.getPic(**kwargs)
         self.muzzleImg=screenImg[int(self.screenHeight*fittingConfig.muzzleComensator1Ymin):
@@ -82,7 +80,7 @@ class imageCoper(BaseDetector):
                 fittingScoredic[moduleImgName]=score
         fittingScoredic=sorted(fittingScoredic.items(),key=lambda x:x[1],reverse=True)
         if fittingScoredic[0][1]<fittingConfig.fittingDetectTheadShold:
-            return "None","None"
+            return "None",0
         else:
             return fittingScoredic[0][0],fittingScoredic[0][1]
     def loadGunsModule(self):
@@ -103,13 +101,14 @@ class imageCoper(BaseDetector):
     def classfyGun(self,thisGunNameImg):
         gunSocreDic={}
         thisGunImgGray=cv2.cvtColor(thisGunNameImg,cv2.COLOR_RGB2GRAY)
+        ret,img2BlackWhite = cv2.threshold(thisGunImgGray, 100, 255, cv2.THRESH_BINARY)
         for moduleImgName in tqdm(self.gunModuleImgsDic.keys()):
             moduleImgGray=self.gunModuleImgsDic[moduleImgName]
-            score=self.compareSimliar(thisGunImgGray,moduleImgGray)
+            score=self.compareSimliar(img2BlackWhite,moduleImgGray)
             gunSocreDic[moduleImgName]=score
         gunSocreDic= sorted(gunSocreDic.items(), key=lambda x: x[1], reverse=True)
         if gunSocreDic[0][1] < gunConfig.gunTypeThreashold:
-            return "None", "None"
+            return "None", 0
         else:
             return gunSocreDic[0][0], gunSocreDic[0][1]
 
@@ -120,10 +119,10 @@ class imageCoper(BaseDetector):
         gripType,gripScore=self.classfyOneFitingByType(self.gripImg,"grip")
         stockType,stockScore=self.classfyOneFitingByType(self.stockImg,"stock")
         gunType,gunScore=self.classfyGun(self.gunNameImg)
-        logging.info("枪械为:"+gunType+"识别准确率为:"+str(gunScore)+"%")
+        logging.info("枪械为:"+gunType+"识别准确率为:"+str(round(gunScore,2))+"%",importantText=True)
         fittingWeights = getFittingWeights.getWeights(gunType, muzzleType, gripType, stockType)
-        logging.info("枪口类型为:" + muzzleType + "识别准确率为:" + str(muzzleScore) + "%")
-        logging.info("握把类型为:" + gripType + "识别准确率为:" + str(gripScore) + "%")
-        logging.info("枪托类型为:" + stockType + "识别准确率为:" + str(stockScore) + "%")
+        logging.info("枪口类型为:" + muzzleType + "识别准确率为:" + str(round(muzzleScore,2)) + "%")
+        logging.info("握把类型为:" + gripType + "识别准确率为:" + str(round(gripScore,2)) + "%")
+        logging.info("枪托类型为:" + stockType + "识别准确率为:" + str(round(stockScore,2)) + "%")
         return fittingWeights,gunType
 

@@ -9,8 +9,9 @@
 @Email   ：WeiHao.fox@foxmail.com
 '''
 from config import globalConfig
-from config.log import Logging
+from config.log import logging
 import cv2,pyautogui
+from PIL import ImageGrab
 import numpy as np
 from skimage.metrics import structural_similarity
 class BaseDetector:
@@ -21,7 +22,11 @@ class BaseDetector:
         if "img" in kwargs.keys():
             return kwargs["img"]
         img=pyautogui.screenshot()
+        print(img)
+        img=np.array(img)
         img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        # cv2.imshow("",cv2.resize(img,(500,500)))
+        # cv2.waitKey()
         img=self.adaptAllScreen(img)
         return img
     def adaptAllScreen(self,img):

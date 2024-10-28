@@ -40,45 +40,54 @@ def getGunPostionPart(img):
                int(globalConfig.screenWidth * gunConfig.gunPostionXmax)]
     return gunNameImg
 def createFittingPart(originImgPath,savePath):
-    imgNameList = os.listdir(originImgPath)
-    print(imgNameList)
-    for i in tqdm(imgNameList):
-        try:
-            if i.split(".")[1] == "png":
-                img = cv2.imread(originImgPath + "/" + i)
-                muzzleImg = getMuzzlePart(img)
-                gripImg = getGripPart(img)
-                stockImg = getStockPart(img)
-                cv2.imwrite(savePath + "/fittingModule/muzzle/" + i, muzzleImg)
-                cv2.imwrite(savePath + "/fittingModule/grip/" + i, gripImg)
-                cv2.imwrite(savePath + "/fittingModule/stock/" + i, stockImg)
-        except:
-            print("非图片，跳过")
+    for typeDir in originImgPath:
+        fittingType=typeDir.split("\\")[-1]
+        print("create type:",fittingType)
+        fittingTypeList=os.listdir(typeDir)
+        for r in fittingTypeList:
+            img=cv2.imread(typeDir+"/"+r)
+            if fittingType=="muzzle":
+                muzzleImg=getMuzzlePart(img)
+                cv2.imwrite(savePath+"/muzzle/"+r,muzzleImg)
+            elif fittingType=="grip":
+                gripImg=getGripPart(img)
+                cv2.imwrite(savePath+"/grip/"+r,gripImg)
+            elif fittingType=="stock":
+                stockImg=getStockPart(img)
+                cv2.imwrite(savePath+"/stock/"+r,stockImg)
 def createBagBoxPart(oriPath,savePath):
-    fileList=os.listdir(oriPath)
-    for i in fileList:
-        if i.split(".")[1]=="png":
-            img = cv2.imread(originImgPath + "/" + i)
-            bagBoxImg=getJudgeTabPart(img)
-            cv2.imwrite(savePath+"/constant/judgeBag.png",bagBoxImg)
-            break
+        img = cv2.imread(oriPath)
+        bagBoxImg=getJudgeTabPart(img)
+        grayImg = cv2.cvtColor(bagBoxImg, cv2.COLOR_BGR2GRAY)
+        # 再将图片变为黑白图片（灰度值大于127的重置像素值为255，否则重置像素值为0，也就是通过阈值127将图像二值化-要么黑要么白）
+        ret, thresh = cv2.threshold(grayImg, 150, 255, cv2.THRESH_BINARY)
+        cv2.imwrite(savePath+"/constant/judgeBag.png",thresh)
 def createMapPart(oriPath,savePath):
-    imgPath=oriPath+"/constant/map.png"
-    img=cv2.imread(imgPath)
+    img=cv2.imread(oriPath)
     isOpenMapImg=getJudgeMapPart(img)
-    cv2.imwrite(savePath+"/constant/judgeMap.png",isOpenMapImg)
+    grayImg = cv2.cvtColor(isOpenMapImg, cv2.COLOR_BGR2GRAY)
+    # 再将图片变为黑白图片（灰度值大于127的重置像素值为255，否则重置像素值为0，也就是通过阈值127将图像二值化-要么黑要么白）
+    ret, thresh = cv2.threshold(grayImg, 150, 255, cv2.THRESH_BINARY)
+    cv2.imwrite(savePath+"/constant/judgeMap.png",thresh)
     print("成功构建判断是否打开地图模板")
 def createGunTypeModule(oriPath,savePath):
     gunList=os.listdir(oriPath)
+    print(gunList)
     for r,path in enumerate(gunList):
         img=cv2.imread(oriPath+"/"+path)
         gunNameImg=getGunPostionPart(img)
-        cv2.imwrite(savePath+"/gunTypeModules/"+path,gunNameImg)
+        grayImg = cv2.cvtColor(gunNameImg, cv2.COLOR_BGR2GRAY)
+        # 再将图片变为黑白图片（灰度值大于127的重置像素值为255，否则重置像素值为0，也就是通过阈值127将图像二值化-要么黑要么白）
+        ret, thresh = cv2.threshold(grayImg, 200, 255, cv2.THRESH_BINARY)
+        cv2.imwrite(savePath+"\\"+path,thresh)
+        print(savePath+"\\"+path)
 if __name__ == '__main__':
-    originImgPath=r"E:\temp"
-    savePath="./data"
-    imgNameList=os.listdir(originImgPath)
-    # createFittingPart(originImgPath,savePath)
-    # createBagBoxPart(originImgPath,savePath)
-    # createMapPart(originImgPath,savePath)
-    createGunTypeModule(originImgPath,savePath)
+    # fittingOriginImgPath=[r"E:\temp\muzzle",r"E:\temp\grip",r"E:\temp\stock"]
+    bagPath=r"E:\temp\constant\bag.png"
+    # mapPath=r"E:\temp\constant\map.png"
+    savePath="../data"
+    # imgNameList=os.listdir(originImgPath)
+    # createFittingPart(fittingOriginImgPath,savePath)
+    # createBagBoxPart(bagPath,savePath)
+    # createMapPart(mapPath,savePath)
+    # createGunTypeModule(originImgPath,savePath)

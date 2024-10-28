@@ -2,20 +2,20 @@ fittingDetectTheadShold=70
 '''
     配件位置数据
 '''
-muzzleComensator1Xmin=0.6921
-muzzleComensator1Xmax=0.7175
-muzzleComensator1Ymin=0.2104
-muzzleComensator1Ymax=0.2555
+muzzleComensator1Xmin=0.6941
+muzzleComensator1Xmax=0.7203
+muzzleComensator1Ymin=0.2180
+muzzleComensator1Ymax=0.2652
 
-grip1Xmin=0.7451
-grip1Xmax=0.7710
-grip1Ymin=0.2104
-grip1Ymax=0.2555
+grip1Xmin=0.7472
+grip1Xmax=0.7734
+grip1Ymin=0.2180
+grip1Ymax=0.2652
 
-stock1Xmin=0.9132
-stock1Xmax=0.9390
-stock1Ymin=0.2104
-stock1Ymax=0.2555
+stock1Xmin=0.9148
+stock1Xmax=0.9410
+stock1Ymin=0.2180
+stock1Ymax=0.2652
 '''
     枪口系列
 '''
