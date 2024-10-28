@@ -1,25 +1,22 @@
-import time, sys
 
-import pynput.keyboard
+import sys
+import time
+
+import numpy as np
+import pyautogui
+import pydirectinput
+import win_precise_time as wpt
+from pynput import keyboard, mouse
+from pynput.keyboard import Controller as keyController
+from pynput.keyboard import Key
 
 from GUI import app
-import cv2
-import pyautogui
-import win32api
-from utils.timeUtils import Timer
-import win_precise_time as wpt
-import numpy as np
-from person import posture
-from pynput.keyboard import Key
-from config.log import logging
-from config import gunConfig, globalConfig, personConfig
-from pynput import keyboard, mouse
-from pynput.mouse import Controller
-from pynput.keyboard import Controller as keyController
-from threadPool import ThreadPool
-import pydirectinput
-from fittingDetect.fittingDeal import imageCoper
 from commonDetect.globalDetect import GlobalDetector
+from config import gunConfig, globalConfig, personConfig
+from config.log import logging
+from fittingDetect.fittingDeal import imageCoper
+from person import posture
+from threadPool import ThreadPool
 
 STATUS = -1
 fittingWeights = 1
@@ -36,7 +33,6 @@ right_button_release_time = 0
 imgcoper = imageCoper()
 globalDetector = GlobalDetector()
 keyController=keyController()
-
 def on_press(key):
     global STATUS, gun, isSquat, isGrovel, isHoldBreath, fittingWeights, is_open_mirror, ifInBag, ifOpenMap,keyController,historyKey
     if key == Key.caps_lock:

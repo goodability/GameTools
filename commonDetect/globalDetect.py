@@ -8,15 +8,10 @@
 @Date    ：2023/8/9 22:39 
 @Email   ：WeiHao.fox@foxmail.com
 '''
-import time
-
 import cv2
 from commonDetect.baseDetector import BaseDetector
 from config import globalConfig, personConfig
 from config.log import logging
-import numpy as np
-
-
 class GlobalDetector(BaseDetector):
     def __init__(self):
         super().__init__()
